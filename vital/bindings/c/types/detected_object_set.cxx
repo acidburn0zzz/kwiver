@@ -53,6 +53,9 @@ SharedPointerCache< kwiver::vital::detected_object_set, vital_detected_object_se
 
 } }
 
+typedef std::vector< kwiver::vital::detected_object_sptr > vector_t;
+
+
 // ==================================================================
 // These two functions support C++ access to the SPTR_CACHE.
 
@@ -126,7 +129,7 @@ vital_detected_object_set_new_from_list( vital_detected_object_t**  dobj,
   STANDARD_CATCH(
     "C::detected_object_set:new_from_list", 0,
 
-    kwiver::vital::detected_object::vector_t input( n );
+    vector_t input( n );
     for ( size_t i = 0; i < n; ++i )
     {
       input.push_back( kwiver::vital_c::DOBJ_SPTR_CACHE.get( dobj[i] ) );
@@ -188,11 +191,14 @@ vital_detected_object_t** vital_detected_object_set_select_threshold( vital_dete
 
     // select to get vector
     vital_detected_object_t** output_set =
-    (vital_detected_object_t**) calloc( sizeof( vital_detected_object_t* ), sel_set.size()+1 );
+    (vital_detected_object_t**) calloc( sizeof( vital_detected_object_t* ), sel_set->size()+1 );
 
-    for ( size_t i = 0; i < sel_set.size(); ++i )
+    auto ie = sel_set->cend();
+    size_t i = 0;
+    for ( auto ix = sel_set->cbegin(); ix != ie; ++ix )
     {
-      output_set[i] = reinterpret_cast< vital_detected_object_t* >( sel_set[i].get() );
+      output_set[i] = reinterpret_cast< vital_detected_object_t* >( (*ix).get() );
+      ++i;
     }
     return output_set;
     );
@@ -212,11 +218,14 @@ vital_detected_object_t** vital_detected_object_set_select_class_threshold( vita
 
     // select to get vector
     vital_detected_object_t** output_set =
-    (vital_detected_object_t**) calloc( sizeof( vital_detected_object_t* ), sel_set.size()+1 );
+    (vital_detected_object_t**) calloc( sizeof( vital_detected_object_t* ), sel_set->size()+1 );
 
-    for (size_t i = 0; i < sel_set.size(); ++i )
+    auto ie = sel_set->cend();
+    size_t i = 0;
+    for ( auto ix = sel_set->cbegin(); ix != ie; ++ix )
     {
-      output_set[i] = reinterpret_cast< vital_detected_object_t* >( sel_set[i].get() );
+      output_set[i] = reinterpret_cast< vital_detected_object_t* >( (*ix).get() );
+      ++i;
     }
     return output_set;
     );
